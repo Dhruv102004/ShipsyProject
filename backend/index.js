@@ -13,9 +13,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use('/api/products', require('./routes/productRoutes.js'));
+app.use('/api/categories', require('./routes/categories.js'));
 app.use('/api/auth', require('./routes/authRoutes.js'));
-app.use('/api', require('./routes/buyerRoutes.js'));
-
+// Buyer routes (purchase) - keep /api/buy
+app.use('/api/buy', require('./routes/buy.js'));
 app.get('/', (req, res) => {
   res.send('Hello from the backend!');
 });

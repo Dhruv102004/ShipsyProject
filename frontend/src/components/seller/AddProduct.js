@@ -26,7 +26,7 @@ const AddProduct = () => {
     e.preventDefault();
     try {
       // First, fetch existing products for this seller and check for duplicates by name
-      const listRes = await axios.get('http://localhost:3001/api/products', {
+      const listRes = await axios.get('http://localhost:3001/api/products/seller', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
 
@@ -49,7 +49,7 @@ const AddProduct = () => {
       // show success then navigate back to dashboard
       setSuccess(true);
       // navigate after a short delay so user sees the success feedback
-      setTimeout(() => navigate('/dashboard'), 1500);
+      setTimeout(() => navigate('/seller-dashboard'), 1000);
     } catch (err) {
       console.error(err);
       if (err.response) {

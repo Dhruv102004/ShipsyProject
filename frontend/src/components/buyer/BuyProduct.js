@@ -1,63 +1,45 @@
-
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const BuyProduct = () => {
-  const [formData, setFormData] = useState({
-    productName: '',
-    quantity: 1,
-  });
-  const [sellingPrice, setSellingPrice] = useState(null);
+const BuyProduct = ({ productName }) => {
+  const [quantity, setQuantity] = useState(1);
 
-  const { productName, quantity } = formData;
+  const handleBuy = async () => {
+    if (!window.confirm(`Buy ${quantity} of ${productName}?`)) return;
 
-  const onChange = (e) =>
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    if (window.confirm('Are you sure you want to buy this product?')) {
-      try {
-        const res = await axios.post('http://localhost:3001/api/buy', formData, {
+    try {
+      const res = await axios.post(
+        'http://localhost:3001/api/buy',
+        { productName, quantity },
+        {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
-        });
-        setSellingPrice(res.data.sellingPrice);
-      } catch (err) {
-        console.error(err);
-        if (err.response) {
-          alert(err.response.data.message);
-        } else {
-          alert('Something went wrong');
         }
+      );
+
+      const sellingPrice = res.data.sellingPrice;
+      alert(`Purchase successful! Total Price: ₹${sellingPrice}`);
+    } catch (err) {
+      console.error(err);
+      if (err.response?.data?.message) {
+        alert(err.response.data.message);
+      } else {
+        alert('Something went wrong!');
       }
     }
   };
 
   return (
     <div>
-      <form onSubmit={onSubmit}>
-        <input
-          type="text"
-          placeholder="Product Name"
-          name="productName"
-          value={productName}
-          onChange={onChange}
-          required
-        />
-        <input
-          type="number"
-          placeholder="Quantity"
-          name="quantity"
-          value={quantity}
-          onChange={onChange}
-          min="1"
-          required
-        />
-        <input type="submit" value="Buy" />
-      </form>
-      {sellingPrice && <div>Total Price: {sellingPrice}</div>}
+      <input
+        type="number"
+        min="1"
+        value={quantity}
+        onChange={(e) => setQuantity(Number(e.target.value))}
+        style={{ width: '60px', marginRight: '10px' }}
+      />
+      <button onClick={handleBuy}>Buy</button>
     </div>
   );
 };

@@ -1,13 +1,39 @@
 
 const Product = require('../models/productModel');
 
-// @desc    Get products
-// @route   GET /api/products
-// @access  Private
+// @desc    Get products (seller-only)
+// @route   GET /api/products/seller
+// @access  Private (seller)
 const getProducts = async (req, res) => {
   const products = await Product.find({ seller: req.user.id });
   res.status(200).json(products);
 };
+
+// @desc    Get products (public)
+// @route   GET /api/products
+// @access  Public
+const getProductsPublic = async (req, res) => {
+  try {
+    const { category, productName } = req.query;
+    const filter = {};
+
+    if (category) {
+      filter.category = category;
+    }
+
+    if (productName) {
+      // Case-insensitive keyword search
+      filter.productName = { $regex: productName, $options: 'i' };
+    }
+
+    const products = await Product.find(filter).select('-__v');
+    res.status(200).json({ products });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
 
 // @desc    Set product
 // @route   POST /api/products
@@ -136,6 +162,7 @@ const deleteProduct = async (req, res) => {
 
 module.exports = {
   getProducts,
+  getProductsPublic,
   getProduct,
   setProduct,
   updateProduct,
