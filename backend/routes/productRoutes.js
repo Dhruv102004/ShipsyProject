@@ -6,6 +6,7 @@ const {
   setProduct,
   updateProduct,
   deleteProduct,
+  getProduct
 } = require('../controllers/productController');
 const { protect, isSeller } = require('../middleware/authMiddleware');
 
@@ -16,6 +17,7 @@ router
 
 router
   .route('/:id')
+  .get(protect, isSeller, getProduct)
   .put(protect, isSeller, updateProduct)
   .delete(protect, isSeller, deleteProduct);
 

@@ -1,13 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 const EditProduct = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    productName: '',
-    category: 'Other',
     costPrice: '',
     quantity: '',
     isFeatured: false,
@@ -36,7 +35,7 @@ const EditProduct = () => {
     fetchProduct();
   }, [id]);
 
-  const { productName, category, costPrice, quantity, isFeatured, taxRate } = formData;
+  const { costPrice, quantity, isFeatured, taxRate } = formData;
 
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -54,6 +53,8 @@ const EditProduct = () => {
         },
       });
       console.log(res.data);
+      alert('Product updated successfully!');
+      navigate('/seller-dashboard');
     } catch (err) {
       console.error(err);
       if (err.response) {
@@ -66,21 +67,6 @@ const EditProduct = () => {
 
   return (
     <form onSubmit={onSubmit}>
-      <input
-        type="text"
-        placeholder="Product Name"
-        name="productName"
-        value={productName}
-        onChange={onChange}
-        required
-      />
-      <select name="category" value={category} onChange={onChange}>
-        <option value="Electronics">Electronics</option>
-        <option value="Clothing">Clothing</option>
-        <option value="Books">Books</option>
-        <option value="Home & Garden">Home & Garden</option>
-        <option value="Other">Other</option>
-      </select>
       <input
         type="number"
         placeholder="Cost Price"

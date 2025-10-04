@@ -25,6 +25,9 @@ const buyProduct = async (req, res) => {
 
     const sellingPrice = product.costPrice * (1 + product.taxRate / 100) * quantity;
 
+    product.quantity -= quantity;
+    await product.save();
+
     res.status(200).json({ sellingPrice });
   } catch (error) {
     console.error(error);

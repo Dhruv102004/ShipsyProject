@@ -73,6 +73,34 @@ const updateProduct = async (req, res) => {
   }
 };
 
+// @desc    Get single product by id
+// @route   GET /api/products/:id
+// @access  Private (seller)
+const getProduct = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    // Check for user
+    if (!req.user) {
+      return res.status(401).json({ message: 'User not found' });
+    }
+
+    // Make sure the logged in user matches the product seller
+    if (product.seller.toString() !== req.user.id) {
+      return res.status(401).json({ message: 'User not authorized' });
+    }
+
+    res.status(200).json(product);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
 // @desc    Delete product
 // @route   DELETE /api/products/:id
 // @access  Private
@@ -95,7 +123,8 @@ const deleteProduct = async (req, res) => {
       return res.status(401).json({ message: 'User not authorized' });
     }
 
-    await product.remove();
+  // Use findByIdAndDelete to remove the document (avoid calling remove on POJO)
+  await Product.findByIdAndDelete(req.params.id);
 
     res.status(200).json({ id: req.params.id });
   } catch (error) {
@@ -104,8 +133,10 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+
 module.exports = {
   getProducts,
+  getProduct,
   setProduct,
   updateProduct,
   deleteProduct,
