@@ -14,7 +14,7 @@ const getProducts = async (req, res) => {
 // @access  Public
 const getProductsPublic = async (req, res) => {
   try {
-    const { category, productName } = req.query;
+    const { category, productName, isFeatured } = req.query;
     const filter = {};
 
     if (category) {
@@ -24,6 +24,10 @@ const getProductsPublic = async (req, res) => {
     if (productName) {
       // Case-insensitive keyword search
       filter.productName = { $regex: productName, $options: 'i' };
+    }
+
+    if (isFeatured) {
+      filter.isFeatured = true;
     }
 
     const products = await Product.find(filter).select('-__v');
