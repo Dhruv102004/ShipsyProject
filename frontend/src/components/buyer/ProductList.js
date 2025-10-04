@@ -5,6 +5,8 @@ import BuyProduct from '../buyer/BuyProduct';
 const ProductList = ({ category }) => {
   const [products, setProducts] = useState([]);
   const [sortOrder, setSortOrder] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 5;
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -19,6 +21,7 @@ const ProductList = ({ category }) => {
 
         const res = await axios.get('http://localhost:3001/api/products', { params });
         setProducts(res.data.products || []);
+        setCurrentPage(1); // Reset to first page when category changes
       } catch (err) {
         console.error('Error fetching products:', err);
       }
@@ -42,6 +45,12 @@ const ProductList = ({ category }) => {
     return 0;
   });
 
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = sortedProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+
+  const totalPages = Math.ceil(sortedProducts.length / productsPerPage);
+
   if (!category) return <p>Select a category to view products</p>;
   if (!products.length) return <p>No products found in this category</p>;
 
@@ -57,7 +66,7 @@ const ProductList = ({ category }) => {
         </button>
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-        {sortedProducts.map((product) => (
+        {currentProducts.map((product) => (
           <div
             key={product._id}
             style={{
@@ -73,6 +82,17 @@ const ProductList = ({ category }) => {
             <BuyProduct productName={product.productName} />
           </div>
         ))}
+      </div>
+      <div style={{ marginTop: '20px' }}>
+        <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
+          Previous
+        </button>
+        <span style={{ margin: '0 10px' }}>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+          Next
+        </button>
       </div>
     </div>
   );

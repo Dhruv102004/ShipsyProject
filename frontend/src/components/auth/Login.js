@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Button, Label, TextInput, Checkbox } from 'flowbite-react';
 
 
 const Login = () => {
@@ -70,26 +71,67 @@ const Login = () => {
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <input
-        type="email"
-        placeholder="Email Address"
-        name="email"
-        value={email}
-        onChange={onChange}
-        required
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        name="password"
-        value={password}
-        onChange={onChange}
-        minLength="6"
-        required
-      />
-      <input type="submit" value="Login" />
-    </form>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div className="bg-white py-8 px-6 shadow rounded-lg">
+          <div className="text-center mb-6">
+            <h2 className="mt-2 text-3xl font-extrabold text-gray-900">Welcome back</h2>
+            <p className="mt-2 text-sm text-gray-600">Sign in to your account to continue</p>
+          </div>
+
+          <form className="mt-8 space-y-6" onSubmit={onSubmit}>
+            <div className="rounded-md shadow-sm -space-y-px">
+              <div className="mb-4">
+                <Label htmlFor="email" value="Email address" />
+                <TextInput
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="name@company.com"
+                  required
+                  value={email}
+                  onChange={onChange}
+                />
+              </div>
+
+              <div className="mb-4">
+                <Label htmlFor="password" value="Password" />
+                <TextInput
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  required
+                  minLength={6}
+                  value={password}
+                  onChange={onChange}
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <Checkbox id="remember" />
+                <Label htmlFor="remember" className="ml-2">Remember me</Label>
+              </div>
+            </div>
+
+            <div>
+              <Button type="submit" className="w-full">
+                Sign in
+              </Button>
+            </div>
+
+            <div className="text-center text-sm text-gray-600">
+              Don't have an account?{' '}
+              <button type="button" className="font-medium text-indigo-600 hover:text-indigo-500" onClick={() => navigate('/register')}>
+                Register
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   );
 };
 
