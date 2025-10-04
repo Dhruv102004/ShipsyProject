@@ -6,17 +6,7 @@ const ProductList = ({ category }) => {
   const [products, setProducts] = useState([]);
   const [sortOrder, setSortOrder] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 5;
-
-  const styles = {
-    arrowButton: {
-      background: '#fff',
-      border: '1px solid #ddd',
-      padding: '6px 10px',
-      borderRadius: '6px',
-      cursor: 'pointer',
-    },
-  };
+  const productsPerPage = 6;
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -61,31 +51,32 @@ const ProductList = ({ category }) => {
 
   const totalPages = Math.ceil(sortedProducts.length / productsPerPage);
 
-  if (!category) return <p>Select a category to view products</p>;
-  if (!products.length) return <p>No products found in this category</p>;
+  if (!products.length && category) {
+    return <p style={styles.noProducts}>No products found in this category</p>;
+  }
 
   return (
-    <div style={{ flex: 1 }}>
-      <h3>Products in "{category}"</h3>
-      <div style={{ marginBottom: '10px' }}>
-        <button onClick={() => setSortOrder('low-to-high')}>
-          Sort by Price: Low to High
-        </button>
-        <button onClick={() => setSortOrder('high-to-low')} style={{ marginLeft: '10px' }}>
-          Sort by Price: High to Low
-        </button>
-      </div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-        {currentProducts.map((product) => (
-          <div
-            key={product._id}
-            style={{
-              border: '1px solid #ddd',
-              padding: '10px',
-              borderRadius: '10px',
-              width: '200px',
-            }}
+    <div style={styles.container}>
+      <div style={styles.header}>
+        <h3 style={styles.title}>Products in "{category}"</h3>
+        <div style={styles.sortContainer}>
+          <button
+            onClick={() => setSortOrder('low-to-high')}
+            style={sortOrder === 'low-to-high' ? styles.activeSortButton : styles.sortButton}
           >
+            Price: Low to High
+          </button>
+          <button
+            onClick={() => setSortOrder('high-to-low')}
+            style={sortOrder === 'high-to-low' ? styles.activeSortButton : styles.sortButton}
+          >
+            Price: High to Low
+          </button>
+        </div>
+      </div>
+      <div style={styles.productList}>
+        {currentProducts.map((product) => (
+          <div key={product._id} style={styles.productCard}>
             <h4>{product.productName}</h4>
             <p>Price: ₹{getPrice(product).toFixed(2)}</p>
             <p>Available: {product.quantity}</p>
@@ -93,11 +84,11 @@ const ProductList = ({ category }) => {
           </div>
         ))}
       </div>
-      <div style={{ marginTop: '20px' }}>
+      <div style={styles.pagination}>
         <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} style={styles.arrowButton}>
           ‹
         </button>
-        <span style={{ margin: '0 10px' }}>
+        <span style={styles.pageInfo}>
           Page {currentPage} of {totalPages}
         </span>
         <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages} style={styles.arrowButton}>
@@ -109,11 +100,75 @@ const ProductList = ({ category }) => {
 };
 
 const styles = {
+  container: {
+    backgroundColor: '#fff',
+    padding: '20px',
+    borderRadius: '10px',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '20px',
+  },
+  title: {
+    color: '#333',
+  },
+  sortContainer: {
+    display: 'flex',
+    gap: '10px',
+  },
+  sortButton: {
+    padding: '8px 12px',
+    border: '1px solid #ddd',
+    borderRadius: '8px',
+    backgroundColor: '#fff',
+    color: '#333',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease-in-out',
+  },
+  activeSortButton: {
+    padding: '8px 12px',
+    border: '1px solid #007bff',
+    borderRadius: '8px',
+    backgroundColor: '#007bff',
+    color: '#fff',
+    cursor: 'pointer',
+  },
+  productList: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+    gap: '20px',
+  },
+  productCard: {
+    border: '1px solid #eee',
+    padding: '15px',
+    borderRadius: '10px',
+    backgroundColor: '#f9f9f9',
+    textAlign: 'center',
+  },
+  noProducts: {
+    textAlign: 'center',
+    color: '#777',
+    marginTop: '50px',
+  },
+  pagination: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: '30px',
+  },
   arrowButton: {
     background: 'transparent',
     border: 'none',
     fontSize: '24px',
     cursor: 'pointer',
+    color: '#007bff',
+  },
+  pageInfo: {
+    margin: '0 15px',
+    color: '#555',
   },
 };
 

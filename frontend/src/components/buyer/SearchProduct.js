@@ -55,46 +55,29 @@ const SearchProduct = () => {
   };
 
   return (
-    <div style={{
-      border: '1px solid #e0e0e0',
-      padding: '16px',
-      borderRadius: '8px',
-      maxWidth: '800px',
-      position: 'relative'
-    }}>
-      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+    <div style={styles.container}>
+      <div style={styles.searchBox}>
         <input
           type="text"
-          placeholder="Search product by name..."
+          placeholder="Search for products..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          style={{ flex: 1, padding: '8px', borderRadius: '6px', border: '1px solid #ccc' }}
+          style={styles.input}
         />
-        <button type="button" onClick={clear} style={{ padding: '8px 12px', borderRadius: '6px' }}>
+        <button type="button" onClick={clear} style={styles.clearButton}>
           Clear
         </button>
       </div>
 
-      {loading && <p>Loading...</p>}
+      {loading && <p style={styles.loading}>Loading...</p>}
       
       {suggestions.length > 0 && (
-        <ul style={{
-          position: 'absolute',
-          top: '100%',
-          left: 0,
-          right: 0,
-          border: '1px solid #ccc',
-          backgroundColor: 'white',
-          listStyle: 'none',
-          margin: 0,
-          padding: 0,
-          zIndex: 1000
-        }}>
+        <ul style={styles.suggestionsList}>
           {suggestions.map((product) => (
             <li
               key={product._id}
               onClick={() => handleSelectProduct(product)}
-              style={{ padding: '8px', cursor: 'pointer' }}
+              style={styles.suggestionItem}
             >
               {product.productName}
             </li>
@@ -102,31 +85,22 @@ const SearchProduct = () => {
         </ul>
       )}
 
-      <div style={{ marginTop: '12px' }}>
-        {error && <p style={{ color: 'crimson' }}>{error}</p>}
+      <div style={styles.resultsContainer}>
+        {error && <p style={styles.error}>{error}</p>}
 
         {selectedProduct && (
-          <div style={{
-            marginTop: '8px',
-            border: '1px solid #ddd',
-            padding: '12px',
-            borderRadius: '8px',
-            display: 'flex',
-            gap: '16px',
-            alignItems: 'center'
-          }}>
+          <div style={styles.selectedProductCard}>
             <div style={{ flex: 1 }}>
-              <h4 style={{ margin: 0 }}>{selectedProduct.productName}</h4>
-              <p style={{ margin: '6px 0' }}>
+              <h4 style={styles.productName}>{selectedProduct.productName}</h4>
+              <p style={styles.productPrice}>
                 Price: ₹{
                   selectedProduct.price
                     ? selectedProduct.price
                     : (selectedProduct.costPrice * (1 + (selectedProduct.taxRate || 0) / 100)).toFixed(2)
                 }
               </p>
-              <p style={{ margin: 0 }}>Available: {selectedProduct.quantity}</p>
+              <p style={styles.productQuantity}>Available: {selectedProduct.quantity}</p>
             </div>
-
             <div style={{ minWidth: '220px' }}>
               <BuyProduct productName={selectedProduct.productName} />
             </div>
@@ -137,4 +111,87 @@ const SearchProduct = () => {
   );
 };
 
+const styles = {
+  container: {
+    maxWidth: '800px',
+    margin: '0 auto',
+    position: 'relative',
+  },
+  searchBox: {
+    display: 'flex',
+    gap: '10px',
+    alignItems: 'center',
+  },
+  input: {
+    flex: 1,
+    padding: '12px 15px',
+    borderRadius: '8px',
+    border: '1px solid #ccc',
+    fontSize: '16px',
+  },
+  clearButton: {
+    padding: '12px 20px',
+    borderRadius: '8px',
+    border: 'none',
+    backgroundColor: '#dc3545',
+    color: '#fff',
+    cursor: 'pointer',
+    transition: 'background-color 0.2s ease-in-out',
+  },
+  loading: {
+    textAlign: 'center',
+    marginTop: '10px',
+    color: '#555',
+  },
+  suggestionsList: {
+    position: 'absolute',
+    top: '100%',
+    left: 0,
+    right: 0,
+    border: '1px solid #ddd',
+    backgroundColor: '#fff',
+    listStyle: 'none',
+    margin: '5px 0 0',
+    padding: 0,
+    zIndex: 1000,
+    borderRadius: '8px',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+  },
+  suggestionItem: {
+    padding: '12px 15px',
+    cursor: 'pointer',
+    borderBottom: '1px solid #eee',
+  },
+  resultsContainer: {
+    marginTop: '20px',
+  },
+  error: {
+    color: 'crimson',
+    textAlign: 'center',
+  },
+  selectedProductCard: {
+    border: '1px solid #eee',
+    padding: '20px',
+    borderRadius: '10px',
+    display: 'flex',
+    gap: '20px',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+  },
+  productName: {
+    margin: 0,
+    color: '#333',
+  },
+  productPrice: {
+    margin: '8px 0',
+    color: '#555',
+  },
+  productQuantity: {
+    margin: 0,
+    color: '#777',
+  },
+};
+
 export default SearchProduct;
+
