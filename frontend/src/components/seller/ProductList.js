@@ -1,11 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import ProductModal from './ProductModal';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const productsPerPage = 5;
   const location = useLocation();
 
@@ -51,6 +54,29 @@ const ProductList = () => {
     }
   };
 
+  const handleOpenModal = (product = null) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setSelectedProduct(null);
+  };
+
+  const handleProductSave = (savedProduct) => {
+    const isEdit = products.some((product) => product._id === savedProduct._id);
+    if (isEdit) {
+      setProducts(
+        products.map((product) =>
+          product._id === savedProduct._id ? savedProduct : product
+        )
+      );
+    } else {
+      setProducts([...products, savedProduct]);
+    }
+  };
+
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
@@ -61,7 +87,7 @@ const ProductList = () => {
     <div style={styles.container}>
       <div style={styles.header}>
         <h2>Your Products</h2>
-        <Link to="/add-product" style={styles.addButton}>Add Product</Link>
+        <button onClick={() => handleOpenModal()} style={styles.addButton}>Add Product</button>
       </div>
       <div style={styles.productList}>
         {currentProducts.map((product) => (
@@ -74,23 +100,30 @@ const ProductList = () => {
               <p>Quantity: {product.quantity}</p>
             </div>
             <div style={styles.productActions}>
-              <Link to={`/edit-product/${product._id}`} style={styles.editButton}>Edit</Link>
+              <button onClick={() => handleOpenModal(product)} style={styles.editButton}>Edit</button>
               <button onClick={() => deleteProduct(product._id)} style={styles.deleteButton}>Delete</button>
             </div>
           </div>
         ))}
       </div>
       <div style={styles.pagination}>
-        <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
-          Previous
+        <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} style={styles.arrowButton}>
+          ‹
         </button>
         <span style={styles.pageInfo}>
           Page {currentPage} of {totalPages}
         </span>
-        <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
-          Next
+        <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages} style={styles.arrowButton}>
+          ›
         </button>
       </div>
+      {isModalOpen && (
+        <ProductModal
+          product={selectedProduct}
+          onClose={handleModalClose}
+          onProductSaved={handleProductSave}
+        />
+      )}
     </div>
   );
 };
@@ -161,6 +194,12 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: '20px',
+  },
+  arrowButton: {
+    background: 'transparent',
+    border: 'none',
+    fontSize: '24px',
+    cursor: 'pointer',
   },
   pageInfo: {
     margin: '0 10px',

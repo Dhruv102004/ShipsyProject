@@ -8,6 +8,16 @@ const ProductList = ({ category }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 5;
 
+  const styles = {
+    arrowButton: {
+      background: '#fff',
+      border: '1px solid #ddd',
+      padding: '6px 10px',
+      borderRadius: '6px',
+      cursor: 'pointer',
+    },
+  };
+
   useEffect(() => {
     const fetchProducts = async () => {
       if (!category) return;
@@ -84,18 +94,27 @@ const ProductList = ({ category }) => {
         ))}
       </div>
       <div style={{ marginTop: '20px' }}>
-        <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
-          Previous
+        <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} style={styles.arrowButton}>
+          ‹
         </button>
         <span style={{ margin: '0 10px' }}>
           Page {currentPage} of {totalPages}
         </span>
-        <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
-          Next
+        <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages} style={styles.arrowButton}>
+          ›
         </button>
       </div>
     </div>
   );
+};
+
+const styles = {
+  arrowButton: {
+    background: 'transparent',
+    border: 'none',
+    fontSize: '24px',
+    cursor: 'pointer',
+  },
 };
 
 export default ProductList;

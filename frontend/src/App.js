@@ -7,8 +7,6 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import SellerDashboard from './pages/SellerDashboard';
 import BuyerDashboard from './pages/BuyerDashboard';
-import AddProduct from './components/seller/AddProduct';
-import EditProduct from './components/seller/EditProduct';
 import PrivateRoute from './components/routing/PrivateRoute';
 
 function App() {
@@ -50,8 +48,6 @@ function App() {
           path="/buyer-dashboard"
           element={<PrivateRoute> <BuyerDashboard /> </PrivateRoute>}
         />
-        <Route path="/add-product" element={<PrivateRoute><AddProduct /></PrivateRoute>} />
-        <Route path="/edit-product/:id" element={<PrivateRoute><EditProduct /></PrivateRoute>} />
       </Routes>
     </Router>
   );
