@@ -1,7 +1,11 @@
 
 const express = require('express');
+const connectDB = require('./db');
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
+
+// Connect to database
+connectDB();
 
 app.get('/', (req, res) => {
   res.send('Hello from the backend!');
