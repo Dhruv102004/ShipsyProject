@@ -8,7 +8,7 @@ const productSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ['Electronics', 'Clothing', 'Books', 'Stationary', 'Other'],
+    enum: ['Electronics', 'Clothing', 'Books', 'Home & Garden', 'Other'],
     required: true,
   },
   costPrice: {
@@ -25,6 +25,11 @@ const productSchema = new mongoose.Schema({
   },
   taxRate: {
     type: Number,
+    required: true,
+  },
+  seller: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
     required: true,
   },
 });
