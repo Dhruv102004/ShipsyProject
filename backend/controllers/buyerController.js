@@ -23,7 +23,18 @@ const buyProduct = async (req, res) => {
       return res.status(400).json({ message: 'Not enough stock' });
     }
 
-    const sellingPrice = product.costPrice * (1 + product.taxRate / 100) * quantity;
+    // Calculate unit selling price including tax
+    const unitSellingPrice = product.costPrice * (1 + (product.taxRate || 0) / 100);
+    let sellingPrice = unitSellingPrice * quantity;
+
+    // Apply 5% discount on sellingPrice if product is featured
+    let discountApplied = false;
+    if (product.isFeatured) {
+      sellingPrice = Number((sellingPrice * 0.95).toFixed(2));
+      discountApplied = true;
+    } else {
+      sellingPrice = Number(sellingPrice.toFixed(2));
+    }
 
     product.quantity -= quantity;
     await product.save();
