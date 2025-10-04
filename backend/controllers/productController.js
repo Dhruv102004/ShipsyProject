@@ -34,6 +34,27 @@ const getProductsPublic = async (req, res) => {
   }
 };
 
+// @desc    Search products by name
+// @route   GET /api/products/search
+// @access  Public
+const searchProducts = async (req, res) => {
+  try {
+    const { name } = req.query;
+    if (!name) {
+      return res.status(400).json({ message: 'Search query is required' });
+    }
+
+    const products = await Product.find({
+      productName: { $regex: `^${name}`, $options: 'i' },
+    }).select('productName price costPrice taxRate quantity');
+
+    res.status(200).json({ products });
+  } catch (error) {
+    console.error('Error searching products:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
 
 // @desc    Set product
 // @route   POST /api/products
@@ -167,4 +188,5 @@ module.exports = {
   setProduct,
   updateProduct,
   deleteProduct,
+  searchProducts,
 };
