@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import api from '../../api';
 import ErrorDisplay from '../common/ErrorDisplay';
 
 const ProductModal = ({ product, onClose, onProductSaved, onSwitchToEdit }) => {
@@ -46,25 +47,13 @@ const ProductModal = ({ product, onClose, onProductSaved, onSwitchToEdit }) => {
     e.preventDefault();
     try {
       if (isEditMode) {
-        const res = await axios.put(
-          `http://localhost:3001/api/products/${product._id}`,
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          }
-        );
+        const res = await api.put(`/products/${product._id}`, formData);
         onProductSaved(res.data);
         onClose();
       } else {
         // Check for existing product
-        const sellerProductsRes = await axios.get('http://localhost:3001/api/products/seller', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-        const existing = sellerProductsRes.data.find(
+        const sellerProductsRes = await api.get('/products/seller');
+        const existing = (sellerProductsRes.data || []).find(
           p => p.productName.toLowerCase() === formData.productName.toLowerCase()
         );
 
@@ -74,11 +63,7 @@ const ProductModal = ({ product, onClose, onProductSaved, onSwitchToEdit }) => {
           return;
         }
 
-        const res = await axios.post('http://localhost:3001/api/products', formData, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
+        const res = await api.post('/products', formData);
         onProductSaved(res.data);
         onClose();
       }

@@ -1,13 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ErrorDisplay from '../common/ErrorDisplay';
 import PurchaseSummary from '../common/PurchaseSummary';
+import SuccessDisplay from '../common/SuccessDisplay';
+import api from '../../api';
 
 const BuyProduct = ({ product }) => {
   const [quantity, setQuantity] = useState(1);
   const [showSummary, setShowSummary] = useState(false);
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const [purchaseSummary, setPurchaseSummary] = useState(null);
+
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => setSuccess(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
 
   const handleBuy = () => {
     const originalCost = product.costPrice * quantity;
@@ -31,16 +41,8 @@ const BuyProduct = ({ product }) => {
   const onConfirm = async () => {
     setShowSummary(false);
     try {
-      await axios.post(
-        'http://localhost:3001/api/buy',
-        { productName: product.productName, quantity },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        }
-      );
-      alert('Purchase successful!');
+      const res = await api.post('/buy', { productName: product.productName, quantity });
+      setSuccess('Purchase successful!');
     } catch (err) {
       console.error(err);
       if (err.response?.data?.message) {
@@ -54,6 +56,7 @@ const BuyProduct = ({ product }) => {
   return (
     <div>
       <ErrorDisplay message={error} onClose={() => setError(null)} />
+      <SuccessDisplay message={success} onClose={() => setSuccess(null)} />
       <div style={styles.container}>
         <input
           type="number"

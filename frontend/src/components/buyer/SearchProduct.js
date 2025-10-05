@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import api from '../../api';
 import debounce from 'lodash.debounce';
 import BuyProduct from './BuyProduct';
 
@@ -21,9 +22,7 @@ const SearchProduct = () => {
     setError('');
 
     try {
-      const res = await axios.get('http://localhost:3001/api/products/search', {
-        params: { name: searchQuery },
-      });
+      const res = await api.get('/products/search', { params: { name: searchQuery } });
       setSuggestions(res.data.products || []);
       setShowSuggestions(true);
     } catch (err) {

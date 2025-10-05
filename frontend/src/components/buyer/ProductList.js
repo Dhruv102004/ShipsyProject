@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import api from '../../api';
 import BuyProduct from './BuyProduct';
 
 const styles = {
@@ -100,8 +101,8 @@ const ProductList = ({ category }) => {
           params.category = category;
         }
 
-        const res = await axios.get('http://localhost:3001/api/products', { params });
-        setProducts(res.data.products || []);
+  const res = await api.get('/products', { params });
+  setProducts(res.data.products || []);
         setCurrentPage(1); // Reset to first page when category changes
       } catch (err) {
         console.error('Error fetching products:', err);

@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import axios from 'axios';
+import api from '../../api';
 import { useNavigate } from 'react-router-dom';
 import ErrorDisplay from '../common/ErrorDisplay';
 
@@ -22,7 +23,7 @@ const Login = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:3001/api/auth/login', formData);
+  const res = await api.post('/auth/login', formData);
       if (!res || !res.data) throw new Error('Invalid response from server');
       const token = res.data.token;
       if (!token) throw new Error('Login did not return a token');
@@ -30,9 +31,7 @@ const Login = () => {
 
       let user = null;
       try {
-        const meRes = await axios.get('http://localhost:3001/api/auth/me', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const meRes = await api.get('/auth/me');
         user = meRes.data;
       } catch (meErr) {
         console.warn('Failed to fetch /api/auth/me, falling back to login response', meErr);

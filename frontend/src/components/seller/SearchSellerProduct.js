@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import api from '../../api';
 import debounce from 'lodash.debounce';
 import ProductModal from './ProductModal';
 import ConfirmationDialog from '../common/ConfirmationDialog';
@@ -27,12 +28,7 @@ const SearchSellerProduct = ({ onProductUpdate }) => {
     setError('');
 
     try {
-      const res = await axios.get('http://localhost:3001/api/products/seller/search', {
-        params: { name: searchQuery },
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
+      const res = await api.get('/products/seller/search', { params: { name: searchQuery } });
       setSuggestions(res.data.products || []);
       setShowSuggestions(true);
     } catch (err) {
@@ -74,13 +70,7 @@ const SearchSellerProduct = ({ onProductUpdate }) => {
   const handleDeleteRequest = async () => {
     if (!productToDelete) return;
     try {
-      await axios.delete(`http://localhost:3001/api/products/${productToDelete._id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        }
-      );
+      await api.delete(`/products/${productToDelete._id}`);
       setProductToDelete(null);
       clear();
       onProductUpdate();

@@ -5,13 +5,15 @@ import ProductList from '../components/seller/ProductList';
 import Header from '../components/common/Header';
 import SearchSellerProduct from '../components/seller/SearchSellerProduct';
 
+
+
 const SellerDashboard = () => {
   const [products, setProducts] = useState([]);
   const [error, setError] = useState(null);
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get('http://localhost:3001/api/products/seller', {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/products/seller`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },

@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import axios from 'axios';
+import api from '../../api';
 import { useNavigate } from 'react-router-dom';
 import ErrorDisplay from '../common/ErrorDisplay';
 import SuccessDisplay from '../common/SuccessDisplay';
@@ -33,7 +34,7 @@ const Register = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:3001/api/auth/register', formData);
+  const res = await api.post('/auth/register', formData);
       console.log(res.data);
       setSuccess('Registration successful! Please login.');
       setTimeout(() => {

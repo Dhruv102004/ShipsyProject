@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import api from '../../api';
 import ProductModal from './ProductModal';
 import ErrorDisplay from '../common/ErrorDisplay';
 import ConfirmationDialog from '../common/ConfirmationDialog';
@@ -25,13 +26,7 @@ const ProductList = ({ products, onUpdate }) => {
   const handleDeleteRequest = async () => {
     if (!productToDelete) return;
     try {
-      await axios.delete(`http://localhost:3001/api/products/${productToDelete}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        }
-      );
+      await api.delete(`/products/${productToDelete}`);
       setProductToDelete(null);
       onUpdate(); // Refresh the list from the parent
     } catch (err) {
