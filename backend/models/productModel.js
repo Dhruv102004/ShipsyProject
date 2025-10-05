@@ -14,10 +14,12 @@ const productSchema = new mongoose.Schema({
   costPrice: {
     type: Number,
     required: true,
+    min: [0.01, 'Price must be greater than 0'],
   },
   quantity: {
     type: Number,
     required: true,
+    min: 0,
   },
   isFeatured: {
     type: Boolean,
@@ -25,7 +27,8 @@ const productSchema = new mongoose.Schema({
   },
   taxRate: {
     type: Number,
-    required: true,
+    default:5,
+    min: 0,
   },
   seller: {
     type: mongoose.Schema.Types.ObjectId,

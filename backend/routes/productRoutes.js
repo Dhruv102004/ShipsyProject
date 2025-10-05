@@ -8,7 +8,8 @@ const {
   updateProduct,
   deleteProduct,
   getProduct,
-  searchProducts, // import the new controller
+  searchProducts,
+  searchSellerProducts, // import the new controller
 } = require('../controllers/productController');
 const { protect, isSeller } = require('../middleware/authMiddleware');
 
@@ -17,6 +18,9 @@ router.route('/').get(getProductsPublic).post(protect, isSeller, setProduct);
 
 // Add a new route for searching products
 router.route('/search').get(searchProducts);
+
+// Add a new route for sellers searching their own products
+router.route('/seller/search').get(protect, isSeller, searchSellerProducts);
 
 // Additional seller listing endpoint (must be before '/:id' to avoid being captured by the param)
 router.route('/seller').get(protect, isSeller, getProducts);

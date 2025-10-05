@@ -1,57 +1,45 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';
 import ProductModal from './ProductModal';
 import ErrorDisplay from '../common/ErrorDisplay';
+import ConfirmationDialog from '../common/ConfirmationDialog';
+import SuccessDisplay from '../common/SuccessDisplay';
 
-const ProductList = () => {
-  const [products, setProducts] = useState([]);
+const ProductList = ({ products, onUpdate }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [productToDelete, setProductToDelete] = useState(null);
   const productsPerPage = 5;
-  const location = useLocation();
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await axios.get('http://localhost:3001/api/products/seller', {
+    if (success) {
+      const timer = setTimeout(() => setSuccess(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
+
+  const handleDeleteRequest = async () => {
+    if (!productToDelete) return;
+    try {
+      await axios.delete(`http://localhost:3001/api/products/${productToDelete}`,
+        {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
-        });
-        setProducts(res.data);
-      } catch (err) {
-        console.error(err);
-        if (err.response) {
-          setError(err.response.data.message);
-        } else {
-          setError('Something went wrong while fetching products.');
         }
-      }
-    };
-
-    fetchProducts();
-  }, [location]);
-
-  const deleteProduct = async (id) => {
-    if (window.confirm('Are you sure you want to delete this product?')) {
-      try {
-        await axios.delete(`http://localhost:3001/api/products/${id}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-        setProducts(products.filter((product) => product._id !== id));
-      } catch (err) {
-        console.error(err);
-        if (err.response) {
-          setError(err.response.data.message);
-        } else {
-          setError('Something went wrong while deleting the product.');
-        }
+      );
+      setProductToDelete(null);
+      onUpdate(); // Refresh the list from the parent
+    } catch (err) {
+      console.error(err);
+      if (err.response) {
+        setError(err.response.data.message);
+      } else {
+        setError('Something went wrong while deleting the product.');
       }
     }
   };
@@ -67,16 +55,14 @@ const ProductList = () => {
     setSelectedProduct(null);
   };
 
-  const handleProductSave = (savedProduct) => {
-    const isEdit = products.some((product) => product._id === savedProduct._id);
+  const handleProductSave = () => {
+    onUpdate(); // Refresh the list from the parent
+    const isEdit = products.some((p) => p._id === selectedProduct?._id);
     if (isEdit) {
-      setProducts(
-        products.map((product) =>
-          product._id === savedProduct._id ? savedProduct : product
-        )
-      );
+      setSuccess('Product updated successfully!');
     } else {
-      setProducts([...products, savedProduct]);
+      setCurrentPage(1);
+      setSuccess('Product added successfully!');
     }
   };
 
@@ -93,6 +79,7 @@ const ProductList = () => {
   return (
     <div style={styles.container}>
       <ErrorDisplay message={error} onClose={() => setError(null)} />
+      <SuccessDisplay message={success} onClose={() => setSuccess(null)} />
       <div style={styles.header}>
         <h2>Your Products</h2>
         <button onClick={() => handleOpenModal()} style={styles.addButton}>Add Product</button>
@@ -106,10 +93,12 @@ const ProductList = () => {
               <p>Category: {product.category}</p>
               <p>Price: ₹{product.costPrice}</p>
               <p>Quantity: {product.quantity}</p>
+              <p>Tax Rate: {product.taxRate}</p>
+
             </div>
             <div style={styles.productActions}>
               <button onClick={() => handleOpenModal(product)} style={styles.editButton}>Edit</button>
-              <button onClick={() => deleteProduct(product._id)} style={styles.deleteButton}>Delete</button>
+              <button onClick={() => setProductToDelete(product._id)} style={styles.deleteButton}>Delete</button>
             </div>
           </div>
         ))}
@@ -131,6 +120,13 @@ const ProductList = () => {
           onClose={handleModalClose}
           onProductSaved={handleProductSave}
           onSwitchToEdit={handleSwitchToEdit}
+        />
+      )}
+      {productToDelete && (
+        <ConfirmationDialog
+          message="Are you sure you want to delete this product?"
+          onConfirm={handleDeleteRequest}
+          onCancel={() => setProductToDelete(null)}
         />
       )}
     </div>

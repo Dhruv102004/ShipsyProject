@@ -1,15 +1,21 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
-import BuyProduct from './BuyProduct';
+import ProductModal from './ProductModal';
+import ConfirmationDialog from '../common/ConfirmationDialog';
+import ErrorDisplay from '../common/ErrorDisplay';
 
-const SearchProduct = () => {
+const SearchSellerProduct = ({ onProductUpdate }) => {
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(true);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [productToEdit, setProductToEdit] = useState(null);
+  const [productToDelete, setProductToDelete] = useState(null);
 
   const fetchSuggestions = async (searchQuery) => {
     if (!searchQuery) {
@@ -21,8 +27,11 @@ const SearchProduct = () => {
     setError('');
 
     try {
-      const res = await axios.get('http://localhost:3001/api/products/search', {
+      const res = await axios.get('http://localhost:3001/api/products/seller/search', {
         params: { name: searchQuery },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
       });
       setSuggestions(res.data.products || []);
       setShowSuggestions(true);
@@ -57,13 +66,41 @@ const SearchProduct = () => {
     setError('');
   };
 
+  const handleProductSave = (savedProduct) => {
+    setSelectedProduct(savedProduct);
+    onProductUpdate();
+  };
+
+  const handleDeleteRequest = async () => {
+    if (!productToDelete) return;
+    try {
+      await axios.delete(`http://localhost:3001/api/products/${productToDelete._id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
+      );
+      setProductToDelete(null);
+      clear();
+      onProductUpdate();
+    } catch (err) {
+      console.error(err);
+      if (err.response) {
+        setError(err.response.data.message);
+      } else {
+        setError('Something went wrong while deleting the product.');
+      }
+    }
+  };
+
   return (
     <div style={styles.container}>
       <div style={styles.searchWrapper}>
         <div style={styles.searchBox}>
           <input
             type="text"
-            placeholder="Search for products..."
+            placeholder="Search your products..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setShowSuggestions(true)}
@@ -92,27 +129,40 @@ const SearchProduct = () => {
       </div>
 
       <div style={styles.resultsContainer}>
-        {error && <p style={styles.error}>{error}</p>}
+        <ErrorDisplay message={error} onClose={() => setError(null)} />
 
         {selectedProduct && (
           <div style={styles.selectedProductCard}>
             <div style={{ flex: 1 }}>
               <h4 style={styles.productName}>{selectedProduct.productName}</h4>
-              <p style={styles.productPrice}>
-                Price: ₹{
-                  selectedProduct.price
-                    ? selectedProduct.price
-                    : (selectedProduct.costPrice * (1 + (selectedProduct.taxRate || 0) / 100)).toFixed(2)
-                }
-              </p>
-              <p style={styles.productQuantity}>Available: {selectedProduct.quantity}</p>
+              <p style={styles.productInfo}>Category: {selectedProduct.category}</p>
+              
+              <p style={styles.productInfo}>Price: ₹{selectedProduct.costPrice}</p>
+              <p style={styles.productInfo}>Quantity: {selectedProduct.quantity}</p>
+
             </div>
-            <div style={{ minWidth: '220px' }}>
-              <BuyProduct product={selectedProduct} />
+            <div style={styles.productActions}>
+              <button onClick={() => { setProductToEdit(selectedProduct); setIsModalOpen(true); }} style={styles.editButton}>Edit</button>
+              <button onClick={() => setProductToDelete(selectedProduct)} style={styles.deleteButton}>Delete</button>
             </div>
           </div>
         )}
       </div>
+
+      {isModalOpen && (
+        <ProductModal
+          product={productToEdit}
+          onClose={() => setIsModalOpen(false)}
+          onProductSaved={handleProductSave}
+        />
+      )}
+      {productToDelete && (
+        <ConfirmationDialog
+          message="Are you sure you want to delete this product?"
+          onConfirm={handleDeleteRequest}
+          onCancel={() => setProductToDelete(null)}
+        />
+      )}
     </div>
   );
 };
@@ -142,7 +192,7 @@ const styles = {
     padding: '12px 20px',
     borderRadius: '8px',
     border: 'none',
-    backgroundColor: '#dc3545',
+    backgroundColor: '#6c757d',
     color: '#fff',
     cursor: 'pointer',
     transition: 'background-color 0.2s ease-in-out',
@@ -174,10 +224,6 @@ const styles = {
   resultsContainer: {
     marginTop: '20px',
   },
-  error: {
-    color: 'crimson',
-    textAlign: 'center',
-  },
   selectedProductCard: {
     border: '1px solid #eee',
     padding: '20px',
@@ -191,16 +237,34 @@ const styles = {
   productName: {
     margin: 0,
     color: '#333',
+    fontSize: '18px',
   },
-  productPrice: {
+  productInfo: {
     margin: '8px 0',
     color: '#555',
   },
-  productQuantity: {
-    margin: 0,
-    color: '#777',
+  productActions: {
+    display: 'flex',
+    gap: '10px',
+  },
+  editButton: {
+    padding: '10px 20px',
+    borderRadius: '8px',
+    border: 'none',
+    backgroundColor: '#007bff',
+    color: '#fff',
+    cursor: 'pointer',
+    transition: 'background-color 0.2s ease-in-out',
+  },
+  deleteButton: {
+    padding: '10px 20px',
+    borderRadius: '8px',
+    border: 'none',
+    backgroundColor: '#dc3545',
+    color: '#fff',
+    cursor: 'pointer',
+    transition: 'background-color 0.2s ease-in-out',
   },
 };
 
-export default SearchProduct;
-
+export default SearchSellerProduct;

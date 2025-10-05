@@ -147,6 +147,8 @@ const ProductModal = ({ product, onClose, onProductSaved, onSwitchToEdit }) => {
               onChange={handleChange}
               style={styles.input}
               required
+              min="0.01"
+              step="0.01"
             />
           </div>
           <div style={styles.formGroup}>
@@ -158,6 +160,7 @@ const ProductModal = ({ product, onClose, onProductSaved, onSwitchToEdit }) => {
               onChange={handleChange}
               style={styles.input}
               required
+              min={isEditMode ? "0" : "1"}
             />
           </div>
           <div style={styles.formGroup}>
@@ -169,6 +172,8 @@ const ProductModal = ({ product, onClose, onProductSaved, onSwitchToEdit }) => {
               onChange={handleChange}
               style={styles.input}
               required
+              min="0"
+              step="0.01"
             />
           </div>
           <div style={styles.formGroup}>
@@ -208,6 +213,7 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     backdropFilter: 'blur(5px)',
+    zIndex: 1000,
   },
   modal: {
     background: 'rgba(255, 255, 255, 0.9)',

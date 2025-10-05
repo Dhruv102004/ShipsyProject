@@ -45,11 +45,19 @@ const styles = {
     gap: '20px',
   },
   productCard: {
+    position: 'relative',
     border: '1px solid #eee',
     padding: '15px',
     borderRadius: '10px',
     backgroundColor: '#f9f9f9',
     textAlign: 'center',
+  },
+  star: {
+    position: 'absolute',
+    top: '10px',
+    right: '10px',
+    color: 'gold',
+    fontSize: '24px',
   },
   noProducts: {
     textAlign: 'center',
@@ -79,7 +87,7 @@ const ProductList = ({ category }) => {
   const [products, setProducts] = useState([]);
   const [sortOrder, setSortOrder] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 6;
+  const productsPerPage = 5;
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -150,10 +158,11 @@ const ProductList = ({ category }) => {
       <div style={styles.productList}>
         {currentProducts.map((product) => (
           <div key={product._id} style={styles.productCard}>
+            {product.isFeatured && <div style={styles.star}>★</div>}
             <h4>{product.productName}</h4>
             <p>Price: ₹{getPrice(product).toFixed(2)}</p>
             <p>Available: {product.quantity}</p>
-            <BuyProduct productName={product.productName} />
+            <BuyProduct product={product} />
           </div>
         ))}
       </div>

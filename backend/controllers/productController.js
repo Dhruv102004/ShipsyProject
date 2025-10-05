@@ -59,27 +59,51 @@ const searchProducts = async (req, res) => {
   }
 };
 
+// @desc    Search seller products by name
+// @route   GET /api/products/seller/search
+// @access  Private (seller)
+const searchSellerProducts = async (req, res) => {
+  try {
+    const { name } = req.query;
+    if (!name) {
+      return res.status(400).json({ message: 'Search query is required' });
+    }
+
+    const products = await Product.find({
+      seller: req.user.id,
+      productName: { $regex: `^${name}`, $options: 'i' },
+    });
+
+    res.status(200).json({ products });
+  } catch (error) {
+    console.error('Error searching seller products:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
 
 // @desc    Set product
 // @route   POST /api/products
 // @access  Private
 const setProduct = async (req, res) => {
-  console.log('req.body', req.body);
-  console.log('req.user', req.user);
   const { productName, category, costPrice, quantity, isFeatured, taxRate } = req.body;
 
-  if (!productName || !category || !costPrice || !quantity || !taxRate) {
+  if (!productName || !category || costPrice === undefined || quantity === undefined || taxRate === undefined) {
     return res.status(400).json({ message: 'Please add all fields' });
+  }
+
+  if (quantity <= 0) {
+    return res.status(400).json({ message: 'Quantity must be greater than 0' });
   }
 
   try {
     const product = await Product.create({
       productName,
       category,
-      costPrice,
+      costPrice: parseFloat(costPrice).toFixed(2),
       quantity,
       isFeatured,
-      taxRate,
+      taxRate: parseFloat(taxRate).toFixed(2),
       seller: req.user.id,
     });
 
@@ -94,9 +118,19 @@ const setProduct = async (req, res) => {
 // @route   PUT /api/products/:id
 // @access  Private
 const updateProduct = async (req, res) => {
-  console.log('req.params.id', req.params.id);
-  console.log('req.body', req.body);
   try {
+    const { costPrice, taxRate } = req.body;
+    if (costPrice !== undefined && costPrice <= 0) {
+      return res.status(400).json({ message: 'Price must be greater than 0' });
+    }
+
+    if (costPrice !== undefined) {
+      req.body.costPrice = parseFloat(costPrice).toFixed(2);
+    }
+    if (taxRate !== undefined) {
+      req.body.taxRate = parseFloat(taxRate).toFixed(2);
+    }
+
     const product = await Product.findById(req.params.id);
 
     if (!product) {
@@ -193,4 +227,5 @@ module.exports = {
   updateProduct,
   deleteProduct,
   searchProducts,
+  searchSellerProducts,
 };
