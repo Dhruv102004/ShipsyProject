@@ -22,7 +22,7 @@ Sellers can add, update, and delete products, while buyers can browse categories
 ---
 
 ## 3. Development History
-*(add notes here if needed)*
+![Git Log Screenshot](img.png)
 
 ---
 
