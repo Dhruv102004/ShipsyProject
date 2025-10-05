@@ -33,6 +33,3 @@ Thumbs.db
 package-lock.json
 yarn.lock
 
-
-.prettier.config.js
-.eslintrc.js
