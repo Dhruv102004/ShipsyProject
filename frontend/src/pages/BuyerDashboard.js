@@ -2,24 +2,28 @@ import React, { useState } from 'react';
 import CategoryList from '../components/buyer/CategoryList';
 import ProductList from '../components/buyer/ProductList';
 import SearchProduct from '../components/buyer/SearchProduct';
+import Header from '../components/common/Header';
 
 const BuyerDashboard = () => {
   const [selectedCategory, setSelectedCategory] = useState('Featured');
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.title}>Buyer Dashboard</h2>
+    <div>
+      <Header />
+      <div style={styles.container}>
+        <h2 style={styles.title}>Buyer Dashboard</h2>
 
-      <div style={styles.searchContainer}>
-        <SearchProduct />
-      </div>
-
-      <div style={styles.mainContent}>
-        <div style={styles.categoryContainer}>
-          <CategoryList selected={selectedCategory} onSelect={setSelectedCategory} />
+        <div style={styles.searchContainer}>
+          <SearchProduct />
         </div>
-        <div style={styles.productContainer}>
-          <ProductList category={selectedCategory} />
+
+        <div style={styles.mainContent}>
+          <div style={styles.categoryContainer}>
+            <CategoryList selected={selectedCategory} onSelect={setSelectedCategory} />
+          </div>
+          <div style={styles.productContainer}>
+            <ProductList category={selectedCategory} />
+          </div>
         </div>
       </div>
     </div>

@@ -3,12 +3,14 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 import ProductModal from './ProductModal';
+import ErrorDisplay from '../common/ErrorDisplay';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [error, setError] = useState(null);
   const productsPerPage = 5;
   const location = useLocation();
 
@@ -24,9 +26,9 @@ const ProductList = () => {
       } catch (err) {
         console.error(err);
         if (err.response) {
-          alert(err.response.data.message);
+          setError(err.response.data.message);
         } else {
-          alert('Something went wrong');
+          setError('Something went wrong while fetching products.');
         }
       }
     };
@@ -46,9 +48,9 @@ const ProductList = () => {
       } catch (err) {
         console.error(err);
         if (err.response) {
-          alert(err.response.data.message);
+          setError(err.response.data.message);
         } else {
-          alert('Something went wrong');
+          setError('Something went wrong while deleting the product.');
         }
       }
     }
@@ -57,6 +59,7 @@ const ProductList = () => {
   const handleOpenModal = (product = null) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
+    setError(null);
   };
 
   const handleModalClose = () => {
@@ -77,6 +80,10 @@ const ProductList = () => {
     }
   };
 
+  const handleSwitchToEdit = (product) => {
+    setSelectedProduct(product);
+  };
+
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
@@ -85,6 +92,7 @@ const ProductList = () => {
 
   return (
     <div style={styles.container}>
+      <ErrorDisplay message={error} onClose={() => setError(null)} />
       <div style={styles.header}>
         <h2>Your Products</h2>
         <button onClick={() => handleOpenModal()} style={styles.addButton}>Add Product</button>
@@ -122,6 +130,7 @@ const ProductList = () => {
           product={selectedProduct}
           onClose={handleModalClose}
           onProductSaved={handleProductSave}
+          onSwitchToEdit={handleSwitchToEdit}
         />
       )}
     </div>

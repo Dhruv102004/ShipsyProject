@@ -2,15 +2,18 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import ConfirmationDialog from '../common/ConfirmationDialog';
 import PriceDisplay from '../common/PriceDisplay';
+import ErrorDisplay from '../common/ErrorDisplay';
 
 const BuyProduct = ({ productName }) => {
   const [quantity, setQuantity] = useState(1);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showPrice, setShowPrice] = useState(false);
   const [sellingPrice, setSellingPrice] = useState(0);
+  const [error, setError] = useState(null);
 
   const handleBuy = () => {
     setShowConfirm(true);
+    setError(null);
   };
 
   const onConfirm = async () => {
@@ -31,15 +34,16 @@ const BuyProduct = ({ productName }) => {
     } catch (err) {
       console.error(err);
       if (err.response?.data?.message) {
-        alert(err.response.data.message);
+        setError(err.response.data.message);
       } else {
-        alert('Something went wrong!');
+        setError('Something went wrong!');
       }
     }
   };
 
   return (
     <div>
+      <ErrorDisplay message={error} onClose={() => setError(null)} />
       <input
         type="number"
         min="1"

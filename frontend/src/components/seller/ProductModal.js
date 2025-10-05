@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import ErrorDisplay from '../common/ErrorDisplay';
 
-const ProductModal = ({ product, onClose, onProductSaved }) => {
+const ProductModal = ({ product, onClose, onProductSaved, onSwitchToEdit }) => {
   const isEditMode = Boolean(product);
   const [formData, setFormData] = useState(
     isEditMode
@@ -15,6 +16,8 @@ const ProductModal = ({ product, onClose, onProductSaved }) => {
           taxRate: '',
         }
   );
+  const [error, setError] = useState(null);
+  const [existingProduct, setExistingProduct] = useState(null);
 
   useEffect(() => {
     if (isEditMode) {
@@ -29,18 +32,21 @@ const ProductModal = ({ product, onClose, onProductSaved }) => {
         taxRate: '',
       });
     }
+    setError(null);
+    setExistingProduct(null);
   }, [product, isEditMode]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setError(null);
+    setExistingProduct(null);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      let res;
       if (isEditMode) {
-        res = await axios.put(
+        const res = await axios.put(
           `http://localhost:3001/api/products/${product._id}`,
           formData,
           {
@@ -49,22 +55,46 @@ const ProductModal = ({ product, onClose, onProductSaved }) => {
             },
           }
         );
+        onProductSaved(res.data);
+        onClose();
       } else {
-        res = await axios.post('http://localhost:3001/api/products', formData, {
+        // Check for existing product
+        const sellerProductsRes = await axios.get('http://localhost:3001/api/products/seller', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         });
+        const existing = sellerProductsRes.data.find(
+          p => p.productName.toLowerCase() === formData.productName.toLowerCase()
+        );
+
+        if (existing) {
+          setError('A product with this name already exists.');
+          setExistingProduct(existing);
+          return;
+        }
+
+        const res = await axios.post('http://localhost:3001/api/products', formData, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        onProductSaved(res.data);
+        onClose();
       }
-      onProductSaved(res.data);
-      onClose();
     } catch (err) {
       console.error(err);
       if (err.response) {
-        alert(err.response.data.message);
+        setError(err.response.data.message);
       } else {
-        alert('Something went wrong');
+        setError('Something went wrong. Please try again.');
       }
+    }
+  };
+
+  const handleSwitchToEdit = () => {
+    if (onSwitchToEdit && existingProduct) {
+      onSwitchToEdit(existingProduct);
     }
   };
 
@@ -73,6 +103,15 @@ const ProductModal = ({ product, onClose, onProductSaved }) => {
       <div style={styles.modal}>
         <h2 style={styles.title}>{isEditMode ? 'Edit Product' : 'Add Product'}</h2>
         <form onSubmit={handleSubmit}>
+          <ErrorDisplay message={error} onClose={() => setError(null)} />
+          {existingProduct && (
+            <div style={styles.existingProductContainer}>
+              <p>A product with this name already exists.</p>
+              <button type="button" onClick={handleSwitchToEdit} style={styles.editExistingButton}>
+                Edit Existing Product
+              </button>
+            </div>
+          )}
           <div style={styles.formGroup}>
             <label style={styles.label}>Name</label>
             <input
@@ -223,6 +262,26 @@ const styles = {
     cursor: 'pointer',
     transition: 'background-color 0.3s ease',
   },
+  existingProductContainer: {
+    padding: '15px',
+    borderRadius: '8px',
+    backgroundColor: '#fff3cd',
+    color: '#856404',
+    border: '1px solid #ffeeba',
+    marginBottom: '20px',
+    textAlign: 'center',
+  },
+  editExistingButton: {
+    padding: '8px 16px',
+    borderRadius: '8px',
+    border: 'none',
+    backgroundColor: '#ffc107',
+    color: '#212529',
+    cursor: 'pointer',
+    marginTop: '10px',
+    transition: 'background-color 0.2s ease-in-out',
+  },
 };
 
 export default ProductModal;
+

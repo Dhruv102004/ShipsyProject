@@ -1,6 +1,79 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import BuyProduct from '../buyer/BuyProduct';
+import BuyProduct from './BuyProduct';
+
+const styles = {
+  container: {
+    backgroundColor: '#fff',
+    padding: '20px',
+    borderRadius: '10px',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '20px',
+  },
+  title: {
+    color: '#333',
+  },
+  sortContainer: {
+    display: 'flex',
+    gap: '10px',
+  },
+  sortButton: {
+    padding: '8px 12px',
+    border: '1px solid #ddd',
+    borderRadius: '8px',
+    backgroundColor: '#fff',
+    color: '#333',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease-in-out',
+  },
+  activeSortButton: {
+    padding: '8px 12px',
+    border: '1px solid #007bff',
+    borderRadius: '8px',
+    backgroundColor: '#007bff',
+    color: '#fff',
+    cursor: 'pointer',
+  },
+  productList: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+    gap: '20px',
+  },
+  productCard: {
+    border: '1px solid #eee',
+    padding: '15px',
+    borderRadius: '10px',
+    backgroundColor: '#f9f9f9',
+    textAlign: 'center',
+  },
+  noProducts: {
+    textAlign: 'center',
+    color: '#777',
+    marginTop: '50px',
+  },
+  pagination: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: '30px',
+  },
+  arrowButton: {
+    background: 'transparent',
+    border: 'none',
+    fontSize: '24px',
+    cursor: 'pointer',
+    color: '#007bff',
+  },
+  pageInfo: {
+    margin: '0 15px',
+    color: '#555',
+  },
+};
 
 const ProductList = ({ category }) => {
   const [products, setProducts] = useState([]);
@@ -97,79 +170,6 @@ const ProductList = ({ category }) => {
       </div>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    backgroundColor: '#fff',
-    padding: '20px',
-    borderRadius: '10px',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '20px',
-  },
-  title: {
-    color: '#333',
-  },
-  sortContainer: {
-    display: 'flex',
-    gap: '10px',
-  },
-  sortButton: {
-    padding: '8px 12px',
-    border: '1px solid #ddd',
-    borderRadius: '8px',
-    backgroundColor: '#fff',
-    color: '#333',
-    cursor: 'pointer',
-    transition: 'all 0.2s ease-in-out',
-  },
-  activeSortButton: {
-    padding: '8px 12px',
-    border: '1px solid #007bff',
-    borderRadius: '8px',
-    backgroundColor: '#007bff',
-    color: '#fff',
-    cursor: 'pointer',
-  },
-  productList: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-    gap: '20px',
-  },
-  productCard: {
-    border: '1px solid #eee',
-    padding: '15px',
-    borderRadius: '10px',
-    backgroundColor: '#f9f9f9',
-    textAlign: 'center',
-  },
-  noProducts: {
-    textAlign: 'center',
-    color: '#777',
-    marginTop: '50px',
-  },
-  pagination: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: '30px',
-  },
-  arrowButton: {
-    background: 'transparent',
-    border: 'none',
-    fontSize: '24px',
-    cursor: 'pointer',
-    color: '#007bff',
-  },
-  pageInfo: {
-    margin: '0 15px',
-    color: '#555',
-  },
 };
 
 export default ProductList;

@@ -2,18 +2,22 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import ErrorDisplay from '../common/ErrorDisplay';
 
 const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const { email, password } = formData;
 
-  const onChange = (e) =>
+  const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setError(null);
+  };
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -47,9 +51,9 @@ const Login = () => {
     } catch (err) {
       console.error(err);
       if (err.response) {
-        alert(err.response.data.message);
+        setError(err.response.data.message);
       } else {
-        alert('Something went wrong');
+        setError('Something went wrong. Please try again.');
       }
     }
   };
@@ -60,6 +64,7 @@ const Login = () => {
         <h2 style={styles.title}>Welcome Back</h2>
         <p style={styles.subtitle}>Sign in to continue</p>
         <form onSubmit={onSubmit} style={styles.form}>
+          <ErrorDisplay message={error} onClose={() => setError(null)} />
           <div style={styles.inputGroup}>
             <label htmlFor="email" style={styles.label}>Email Address</label>
             <input

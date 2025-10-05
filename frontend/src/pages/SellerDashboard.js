@@ -1,12 +1,16 @@
 
 import React from 'react';
 import ProductList from '../components/seller/ProductList';
+import Header from '../components/common/Header';
 
 const SellerDashboard = () => {
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Seller Dashboard</h1>
-      <ProductList />
+    <div>
+      <Header />
+      <div style={styles.container}>
+        <h1 style={styles.title}>Seller Dashboard</h1>
+        <ProductList />
+      </div>
     </div>
   );
 };
