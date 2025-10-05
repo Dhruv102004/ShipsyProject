@@ -1,70 +1,50 @@
-# Getting Started with Create React App
+# Buy&Sell
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Buy&Sell is a MERN stack product management application with two user roles: sellers and buyers.  
+Sellers can add, update, and delete products, while buyers can browse categories, search products, and make purchases.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 1. Features
 
-### `npm start`
+- Authentication System  
+- CRUD operations  
+- Pagination  
+- Useful filters  
+- Sorting functionality  
+- Search functionality  
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 2. Live Application
+[https://shipsyproject-0.onrender.com](https://shipsyproject-0.onrender.com)
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 3. Development History
+*(add notes here if needed)*
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 4. AI Documentation
+[AI Documentation](https://docs.google.com/document/d/1SAPTG_ujpcCrBBWpc14TEwE2ruqmR3_RsPFkyEJZLzM/edit?tab=t.0#heading=h.p2g558nc2hyy)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 5. Demo Video
+*(insert link here)*
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## 6. Architecture Documentation
+[Architecture Documentation](https://docs.google.com/document/d/1BlLGgoFgcHpF4F6jj4CpdEmal_LjtjwHtsKhCjlfLZE/edit?tab=t.0#heading=h.9g7hzwtdcqfz)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 7. API Documentation
+[API Documentation](https://docs.google.com/document/d/1DSX55UBSw2MIdOC6aY6LMobudCHiEYM6HoXA6hHiJ84/edit?tab=t.0)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+---
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 8. API Testing through Postman
+[Postman Tests](https://docs.google.com/document/d/16a-zqoi627rx3r7Y-f--Owbx6ggi3HgX_pOfJBOUwP4/edit?tab=t.0)
