@@ -32,7 +32,7 @@ Sellers can add, update, and delete products, while buyers can browse categories
 ---
 
 ## 5. Demo Video
-*(insert link here)*
+[Demo video](https://www.loom.com/share/8e7270af3d8a49d9ab5ff91df13762e9?sid=dc2fe40c-b121-4142-9ac4-dad5575ff7a1)
 
 ---
 
